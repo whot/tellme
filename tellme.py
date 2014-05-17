@@ -37,7 +37,7 @@ class Command(object):
 		return self.output
 
 	def _apply_config(self):
-		config = ConfigParser.SafeConfigParser()
+		self.config = ConfigParser.SafeConfigParser()
 
 		paths = ["%s/tellme/%s.conf" % (self.configpath, self.binary)]
 
@@ -50,27 +50,28 @@ class Command(object):
 
 		paths.append("%s/.tellme/%s.conf" % (cwd, self.binary))
 
-		if len(config.read(paths)) == 0:
+		if len(self.config.read(paths)) == 0:
 			return
 
 		wl = []
 		bl = []
-		if config.has_option("talk", "whitelist"):
-			wl = config.get("talk", "whitelist").split(" ")
-		if config.has_option("talk", "blacklist"):
-			bl = config.get("talk", "blacklist").split(" ")
+		if self.config.has_option("talk", "whitelist"):
+			wl = self.config.get("talk", "whitelist").split(" ")
+		if self.config.has_option("talk", "blacklist"):
+			bl = self.config.get("talk", "blacklist").split(" ")
 		argstring = self._filter_args(wl, bl)
-		self.output = "%s %s" % (self.binary, argstring)
+		directory = self._get_directory()
+		self.output = "%s %s %s" % (directory, self.binary, argstring)
 
 	def _get_directory(self):
-		if not config.has_option("talk", "directory"):
+		if not self.config.has_option("talk", "directory"):
 			return
 
-		want_dir = config.get("talk", "directory")
+		want_dir = self.config.get("talk", "directory")
 		if want_dir == "none": 
-			return
+			return ""
 		elif want_dir == "pwd":
-			self.output = "%s %s" % (os.path.basename(os.getcwd()), self.output)
+			return os.path.basename(os.getcwd())
 		elif want_dir == "git":
 			path = os.getcwd()
 			found = True
@@ -80,9 +81,12 @@ class Command(object):
 					found = False
 					break
 			if found:
-				self.output = "%s %s" % (os.path.basename(path), self.output)
+				path = os.path.basename(path)
 			else:
-				self.output = "%s %s" % (os.path.basename(os.getcwd()), self.output)
+				path = os.path.basename(os.getcwd())
+
+			return path
+		return ""
 
 	def _filter_args(self, whitelist, blacklist):
 		args = self.commandline[1:]
