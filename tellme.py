@@ -38,7 +38,19 @@ class Command(object):
 
 	def _apply_config(self):
 		config = ConfigParser.SafeConfigParser()
-		if len(config.read("%s/tellme/%s.conf" % (self.configpath, self.binary))) == 0:
+
+		paths = ["%s/tellme/%s.conf" % (self.configpath, self.binary)]
+
+		# run up from cwd to first instance of .tellme existing
+		cwd = os.getcwd()
+		while not os.path.isdir("%s/.tellme" % cwd):
+			cwd = os.path.realpath(cwd + "/..")
+			if os.path.dirname(cwd) == cwd:
+				break
+
+		paths.append("%s/.tellme/%s.conf" % (cwd, self.binary))
+
+		if len(config.read(paths)) == 0:
 			return
 
 		arguments = config.get("talk", "arguments")
