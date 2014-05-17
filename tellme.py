@@ -53,19 +53,14 @@ class Command(object):
 		if len(config.read(paths)) == 0:
 			return
 
-		arguments = config.get("talk", "arguments")
-		if arguments == "all":
-			self.output = " ".join(self.commandline)
-		elif arguments == "filtered":
-			wl = ""
-			bl = ""
-
-			if config.has_option("talk", "arguments_whitelist"):
-				wl = config.get("talk", "arguments_whitelist")
-			if config.has_option("talk", "arguments_blacklist"):
-				bl = config.get("talk", "arguments_blacklist")
-			self.output = self._filter_output(wl.split(" "), bl.split(" "))
-
+		wl = []
+		bl = []
+		if config.has_option("talk", "whitelist"):
+			wl = config.get("talk", "whitelist").split(" ")
+		if config.has_option("talk", "blacklist"):
+			bl = config.get("talk", "blacklist").split(" ")
+		argstring = self._filter_args(wl, bl)
+		self.output = "%s %s" % (self.binary, argstring)
 
 	def _get_directory(self):
 		if not config.has_option("talk", "directory"):
@@ -89,22 +84,26 @@ class Command(object):
 			else:
 				self.output = "%s %s" % (os.path.basename(os.getcwd()), self.output)
 
-	def _filter_output(self, whitelist, blacklist):
-		output_args = self.commandline[1:]
+	def _filter_args(self, whitelist, blacklist):
+		args = self.commandline[1:]
 
+                # drop all blacklisted args first
 		for pat in blacklist:
 			if pat == "":
 				continue
 			pattern = re.compile(pat)
-			output_args = [ x for x in output_args if not pattern.match(x) ]
+			args = [ a for a in args if not pattern.match(a) ]
 
-		output = self.binary
-		for arg in output_args:
-			matches = [ x for x in whitelist if re.match(x, arg) ]
-			if len(matches) > 0:
-				output += " %s" % arg
+		# whitelist only applies if it exists
+		if len(whitelist) > 0:
+			whitelisted = []
+			for arg in args:
+				matches = [ x for x in whitelist if re.match(x, arg) ]
+				if len(matches) > 0:
+					whitelisted.append(arg)
+			args = whitelisted
 
-		return output
+		return " ".join(args)
 
 if __name__ == "__main__":
 	if len(sys.argv) == 1:
