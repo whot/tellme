@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import errno
 import glob
 import re
 import sys
@@ -146,9 +147,16 @@ if __name__ == "__main__":
 		usage()
 		sys.exit(1)
 
-	command = sys.argv[1:]
-	rc = subprocess.call(command, stdin=0, stdout=1, stderr=2)
-	cmd = Command(command)
-	talk(cmd, rc)
-	sys.exit(rc)
+	try:
+		command = sys.argv[1:]
+		rc = subprocess.call(command, stdin=0, stdout=1, stderr=2)
+		cmd = Command(command)
+		talk(cmd, rc)
+		sys.exit(rc)
+	except OSError as e:
+		if e.errno == errno.ENOENT:
+			print "command not found: %s" % command[0]
+		else:
+			print "%s: %s" % (command[0], e.strerror)
+		sys.exit(127)
 
