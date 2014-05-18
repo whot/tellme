@@ -71,11 +71,7 @@ class Command(object):
 		if command == "general":
 			error("Seriously? A command called general?")
 
-		wl = self._get_config_option(command, "whitelist") or ""
-		wl = wl.split(" ")
-		bl = self._get_config_option(command, "blacklist") or ""
-		bl = bl.split(" ")
-		argstring = self._filter_args(wl, bl)
+		argstring = self._filter_args()
 		directory = self._get_directory()
 		self.output = "%s %s %s" % (directory, command, argstring)
 
@@ -101,21 +97,26 @@ class Command(object):
 				path = os.path.basename(os.getcwd())
 		return path
 
-	def _filter_args(self, whitelist, blacklist):
+	def _filter_args(self):
+		wl = self._get_config_option("whitelist") or ""
+		wl = wl.split(" ")
+		bl = self._get_config_option("blacklist") or ""
+		bl = bl.split(" ")
+
 		args = self.commandline[1:]
 
                 # drop all blacklisted args first
-		for pat in blacklist:
+		for pat in bl:
 			if pat == "":
 				continue
 			pattern = re.compile(pat)
 			args = [ a for a in args if not pattern.match(a) ]
 
 		# whitelist only applies if it exists
-		if len(whitelist) > 0:
+		if len(wl) > 0:
 			whitelisted = []
 			for arg in args:
-				matches = [ x for x in whitelist if re.match(x, arg) ]
+				matches = [ x for x in wl if re.match(x, arg) ]
 				if len(matches) > 0:
 					whitelisted.append(arg)
 			args = whitelisted
