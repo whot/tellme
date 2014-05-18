@@ -10,6 +10,10 @@ import ConfigParser
 def usage():
 	print "usage: %s command [options]" % os.path.basename(sys.argv[0])
 
+def error(msg):
+	print >> sys.stderr, msg
+	sys.exit(1)
+
 def talk(command, status):
 	p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
 	msg = "finished %s" % str(command)
@@ -55,6 +59,9 @@ class Command(object):
 			return
 
 		command = self.binary
+		if command == "general":
+			error("Seriously? A command called general?")
+
 		wl = []
 		bl = []
 		if self.config.has_option(command, "whitelist"):
@@ -67,10 +74,13 @@ class Command(object):
 
 	def _get_directory(self):
 		command = self.binary
-		if not self.config.has_option(command, "directory"):
-			return
+		want_dir = "none"
+		if self.config.has_option("general", "directory"):
+			want_dir = self.config.get("general", "directory")
 
-		want_dir = self.config.get(command, "directory")
+		if self.config.has_option(command, "directory"):
+			want_dir = self.config.get(command, "directory")
+
 		if want_dir == "none": 
 			return ""
 		elif want_dir == "pwd":
