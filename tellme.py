@@ -95,7 +95,25 @@ class Command(object):
 				path = os.path.basename(path)
 			else:
 				path = os.path.basename(os.getcwd())
-		return path
+		return self._sub_directory(path)
+
+	def _sub_directory(self, directory):
+		subs = self._get_config_option("dirsubs") or ""
+		subs = subs.split(" ")
+
+		for pat in subs:
+			if len(pat) == 0:
+				continue
+			if len(pat) <= 3:
+				error("Invalid regex '%s' in dirsubs='%s'", pat, " ".join(subs))
+			fields = pat.split(pat[0])
+			if len(fields) < 4:
+				error("Invalid regex '%s' in dirsubs='%s'", pat, " ".join(subs))
+			if re.match(fields[1], directory):
+				directory = re.sub(fields[1], fields[2], directory)
+				break
+		return directory
+
 
 	def _filter_args(self):
 		wl = self._get_config_option("whitelist") or ""
