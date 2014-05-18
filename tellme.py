@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import glob
 import re
 import sys
 import os
@@ -39,7 +40,7 @@ class Command(object):
 	def _apply_config(self):
 		self.config = ConfigParser.SafeConfigParser()
 
-		paths = ["%s/tellme/%s.conf" % (self.configpath, self.binary)]
+		paths = glob.glob("%s/tellme/*.conf" % (self.configpath))
 
 		# run up from cwd to first instance of .tellme existing
 		cwd = os.getcwd()
@@ -48,26 +49,28 @@ class Command(object):
 			if os.path.dirname(cwd) == cwd:
 				break
 
-		paths.append("%s/.tellme/%s.conf" % (cwd, self.binary))
+		paths + glob.glob("%s/.tellme/*.conf" % (cwd))
 
 		if len(self.config.read(paths)) == 0:
 			return
 
+		command = self.binary
 		wl = []
 		bl = []
-		if self.config.has_option("talk", "whitelist"):
-			wl = self.config.get("talk", "whitelist").split(" ")
-		if self.config.has_option("talk", "blacklist"):
-			bl = self.config.get("talk", "blacklist").split(" ")
+		if self.config.has_option(command, "whitelist"):
+			wl = self.config.get(command, "whitelist").split(" ")
+		if self.config.has_option(command, "blacklist"):
+			bl = self.config.get(command, "blacklist").split(" ")
 		argstring = self._filter_args(wl, bl)
 		directory = self._get_directory()
-		self.output = "%s %s %s" % (directory, self.binary, argstring)
+		self.output = "%s %s %s" % (directory, command, argstring)
 
 	def _get_directory(self):
-		if not self.config.has_option("talk", "directory"):
+		command = self.binary
+		if not self.config.has_option(command, "directory"):
 			return
 
-		want_dir = self.config.get("talk", "directory")
+		want_dir = self.config.get(command, "directory")
 		if want_dir == "none": 
 			return ""
 		elif want_dir == "pwd":
