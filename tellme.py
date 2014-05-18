@@ -83,7 +83,7 @@ class Command(object):
 
 		if want_dir == "none": 
 			return ""
-		elif want_dir == "pwd":
+		elif want_dir == "cwd":
 			return os.path.basename(os.getcwd())
 		elif want_dir == "git":
 			path = os.getcwd()
