@@ -41,6 +41,15 @@ class Command(object):
 	def __str__(self):
 		return self.output
 
+	def _get_config_option(self, option):
+		val = None
+		if self.config.has_option("general", option):
+			val = self.config.get("general", option)
+
+		if self.config.has_option(self.binary, option):
+			val = self.config.get(self.binary, option)
+		return val
+
 	def _apply_config(self):
 		self.config = ConfigParser.SafeConfigParser()
 
@@ -62,29 +71,22 @@ class Command(object):
 		if command == "general":
 			error("Seriously? A command called general?")
 
-		wl = []
-		bl = []
-		if self.config.has_option(command, "whitelist"):
-			wl = self.config.get(command, "whitelist").split(" ")
-		if self.config.has_option(command, "blacklist"):
-			bl = self.config.get(command, "blacklist").split(" ")
+		wl = self._get_config_option(command, "whitelist") or ""
+		wl = wl.split(" ")
+		bl = self._get_config_option(command, "blacklist") or ""
+		bl = bl.split(" ")
 		argstring = self._filter_args(wl, bl)
 		directory = self._get_directory()
 		self.output = "%s %s %s" % (directory, command, argstring)
 
 	def _get_directory(self):
-		command = self.binary
-		want_dir = "none"
-		if self.config.has_option("general", "directory"):
-			want_dir = self.config.get("general", "directory")
+		want_dir = self._get_config_option("directory")
 
-		if self.config.has_option(command, "directory"):
-			want_dir = self.config.get(command, "directory")
-
+		path = ""
 		if want_dir == "none": 
-			return ""
+			pass
 		elif want_dir == "cwd":
-			return os.path.basename(os.getcwd())
+			path = os.path.basename(os.getcwd())
 		elif want_dir == "git":
 			path = os.getcwd()
 			found = True
@@ -97,9 +99,7 @@ class Command(object):
 				path = os.path.basename(path)
 			else:
 				path = os.path.basename(os.getcwd())
-
-			return path
-		return ""
+		return path
 
 	def _filter_args(self, whitelist, blacklist):
 		args = self.commandline[1:]
