@@ -9,11 +9,6 @@ import ConfigParser
 def usage():
 	print "usage: %s command [options]" % os.path.basename(sys.argv[0])
 
-def strip_sudo(args):
-	if os.path.basename(args[0]) == "sudo":
-		args = args[1:]
-	return args
-
 def talk(command, status):
 	p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
 	msg = "finished %s" % str(command)
@@ -26,12 +21,17 @@ def talk(command, status):
 class Command(object):
 	configpath = os.getenv("XDG_CONFIG_HOME",  "%s/.config" % os.environ["HOME"])
 	def __init__(self, command):
-		self.commandline = strip_sudo(command)
+		self.commandline = self._strip_sudo(command)
 		self.binary = os.path.basename(self.commandline[0])
 		# default is just to speak the binary
 		self.output = self.binary
 
 		self._apply_config()
+
+	def _strip_sudo(self, args):
+		if os.path.basename(args[0]) == "sudo":
+			args = args[1:]
+		return args
 
 	def __str__(self):
 		return self.output
