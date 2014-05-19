@@ -16,13 +16,17 @@ def error(msg):
 	sys.exit(1)
 
 def talk(command, status):
-	p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
-	msg = "finished %s" % str(command)
-	if status != 0:
-		msg += " with error %d" % status
-	else:
-		msg += " successfully"
-	p.communicate(msg)
+	# voice output can take a while, no need to wait until it finished.
+	# call festival from the child process, so we don't hang the
+	# terminal
+	if os.fork() == 0:
+		p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
+		msg = "finished %s" % str(command)
+		if status != 0:
+			msg += " with error %d" % status
+		else:
+			msg += " successfully"
+		p.communicate(msg)
 
 class Command(object):
 	sysconfigpath = "@datarootdir@"
