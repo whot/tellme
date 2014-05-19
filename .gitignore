@@ -74,3 +74,4 @@ core
 
 # Local patterns
 .vimdir
+*.swp
