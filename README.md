@@ -17,6 +17,14 @@ the example configuration file. With that file,
 
 will eventually say "finished myproject make install successfully".
 
+Installation
+------------
+
+    autoreconf -ivf
+    ./configure --prefix=/usr
+    make
+    sudo make install
+
 Dependencies 
 ------------
 
