@@ -125,6 +125,8 @@ class Command(object):
 		bl = bl.split(" ")
 
 		args = self.commandline[1:]
+		if len(bl) == 0 and len(wl) == 0:
+			args = []
 
                 # drop all blacklisted args first
 		for pat in bl:
