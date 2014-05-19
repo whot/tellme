@@ -15,27 +15,15 @@ def error(msg):
 	print >> sys.stderr, msg
 	sys.exit(1)
 
-def talk(command, status):
-	# voice output can take a while, no need to wait until it finished.
-	# call festival from the child process, so we don't hang the
-	# terminal
-	if os.fork() == 0:
-		p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
-		msg = "finished %s" % str(command)
-		if status != 0:
-			msg += " with error %d" % status
-		else:
-			msg += " successfully"
-		p.communicate(msg)
-
 class Command(object):
 	sysconfigpath = "@datarootdir@"
 	configpath = os.getenv("XDG_CONFIG_HOME",  "%s/.config" % os.environ["HOME"])
-	def __init__(self, command):
+	def __init__(self, command, status):
 		self.commandline = self._strip_sudo(command)
 		self.binary = os.path.basename(self.commandline[0])
 		# default is just to speak the binary
 		self.output = self.binary
+		self.status = status
 
 		self._apply_config()
 
@@ -150,6 +138,21 @@ class Command(object):
 
 		return " ".join(args)
 
+	def talk(self):
+		# voice output can take a while, no need to wait until it finished.
+		# call festival from the child process, so we don't hang the
+		# terminal
+		if os.fork() == 0:
+			p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
+			msg = "finished %s" % str(self.binary)
+			if self.status != 0:
+				msg += " with error %d" % status
+			else:
+				msg += " successfully"
+			p.communicate(msg)
+
+
+
 if __name__ == "__main__":
 	if len(sys.argv) == 1:
 		usage()
@@ -158,8 +161,8 @@ if __name__ == "__main__":
 	try:
 		command = sys.argv[1:]
 		rc = subprocess.call(command, stdin=0, stdout=1, stderr=2)
-		cmd = Command(command)
-		talk(cmd, rc)
+		cmd = Command(command, rc)
+		cmd.talk()
 		sys.exit(rc)
 	except OSError as e:
 		if e.errno == errno.ENOENT:
