@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import errno
 import glob
 import re
@@ -9,10 +10,10 @@ import subprocess
 import ConfigParser
 
 def usage():
-	print "usage: %s command [options]" % os.path.basename(sys.argv[0])
+	print("usage: %s command [options]" % os.path.basename(sys.argv[0]))
 
 def error(msg):
-	print >> sys.stderr, msg
+	print(msg, file=sys.stderr)
 	sys.exit(1)
 
 class Command(object):
@@ -170,8 +171,8 @@ if __name__ == "__main__":
 		sys.exit(rc)
 	except OSError as e:
 		if e.errno == errno.ENOENT:
-			print "command not found: %s" % command[0]
+			print("command not found: %s" % command[0])
 		else:
-			print "%s: %s" % (command[0], e.strerror)
+			print("%s: %s" % (command[0], e.strerror))
 		sys.exit(127)
 
