@@ -157,8 +157,7 @@ class Command(object):
 				msg += " with error %d" % status
 			else:
 				msg += " successfully"
-			p.communicate(msg)
-
+			p.communicate(msg.encode("utf-8"))
 
 
 if __name__ == "__main__":
