@@ -1,0 +1,69 @@
+% TELLME(1)
+% Peter Hutterer
+
+# NAME
+
+tellme - text-to-speech command execution notifier
+
+# SYNOPSIS
+
+tellme [sudo] command [arg] [arg] ..
+
+# DESCRIPTION
+
+**tellme** runs the command and notify the user through text-to-speech when the
+process finishes. In a default invocation, **tellme** notifies the user
+whether the process finished successfully or with an error code. Depending
+on the configuration options (see CONFIGURATION) **tellme** may also add
+directory names, remove, add or substitute arguments.
+
+tellme recognises the **sudo(8)** command and strips it from the voice output,
+it is thus not necessary to run **tellme** itself as root.
+
+# CONFIGURATION FILES
+
+Configuration is supported through one or more configuration files. The
+primary set of configuration files is in **XDG_CONFIG_HOME/tellme/\*.conf**.
+These files are always loaded.
+
+Per-directory overrides may be placed in **$PWD/.tellme/\*.conf**.
+**tellme** runs upwards from the current working directory to locate a
+**.tellme** configuration folder. On the first one found, the configuration
+files are added to the list.
+
+# CONFIGURATION DIRECTIVES
+
+Configuration directives are divided into a **[general]** section and
+command-specific sections. These sections are named after the command, i.e.
+for the **make** command the section is **[make]**.
+
+directory=none
+:    The directory included in the voice output. If unset or *none*, no
+     directory is included. If *cwd*, the current directory's basename is
+     added to the output. If *git*, **tellme** searches upwards for a
+     directory containing a ".git" subdirectory. If found, that directory is
+     added to the output, otherwise the current working directory is used.
+
+dirsubs=/search/replace/ /search/replace/ :search:replace:
+:    A space-separated list of search/replace patterns that modify the
+     directory name. The first regex that matches is applied and processing
+     stops. The field separator is the first and last character of the
+     string and separates the search from the replace pattern.
+
+blacklist=regex regex
+:    A space-separated list of regular expressions. Any argument that matches
+     any expression is dropped from the output.
+
+whitelist=regex regex
+:    A space-separated list of regular expressions. If set, any argument that
+     matches any expression is added to the output, unless prohibited by the
+     blacklist. Any argument that does not match any whitelisted argument is
+     dropped.
+
+# SEE ALSO
+
+festival(1)
+
+The XDG base directory specification
+<http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html>
+
