@@ -38,6 +38,11 @@ Configuration directives are divided into a **[general]** section and
 command-specific sections. These sections are named after the command, i.e.
 for the **make** command the section is **[make]**.
 
+talk=always
+:    Define when to talk. If unset or *always*, always talk when the process
+     completes. If set to *error*, only talk when the process finishes with
+     a non-zero exit code.
+
 directory=none
 :    The directory included in the voice output. If unset or *none*, no
      directory is included. If *cwd*, the current directory's basename is

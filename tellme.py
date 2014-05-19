@@ -139,6 +139,10 @@ class Command(object):
 		return " ".join(args)
 
 	def talk(self):
+		if self.status == 0:
+			if self._get_config_option("talk") == "error":
+				return
+
 		# voice output can take a while, no need to wait until it finished.
 		# call festival from the child process, so we don't hang the
 		# terminal
