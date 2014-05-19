@@ -57,7 +57,7 @@ class Command(object):
 			if os.path.dirname(cwd) == cwd:
 				break
 
-		paths + glob.glob("%s/.tellme/*.conf" % (cwd))
+		paths += glob.glob("%s/.tellme/*.conf" % (cwd))
 
 		if len(self.config.read(paths)) == 0:
 			return
