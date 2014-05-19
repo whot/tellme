@@ -3,11 +3,13 @@ dist_man1_MANS = tellme.1
 
 SUFFIXES = .1
 
+SED_SUBS=-e "s|\@datarootdir\@|$(datarootdir)|"
+
 .man.1:
-	$(PANDOC) -s -t man $< -o $@
+	sed $(SED_SUBS) $^ | $(PANDOC) -s -t man -o $@
 
 tellme: tellme.py
-	sed -e "s|\@datarootdir\@|$(datarootdir)|" $^ > $@
+	sed $(SED_SUBS) $^ > $@
 
 CLEANFILES = $(dist_man1_MANS) $(dist_bin_SCRIPTS)
 EXTRA_DIST = tellme.example.conf

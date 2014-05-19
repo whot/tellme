@@ -23,8 +23,9 @@ it is thus not necessary to run **tellme** itself as root.
 # CONFIGURATION FILES
 
 Configuration is supported through one or more configuration files. The
-primary set of configuration files is in **XDG_CONFIG_HOME/tellme/\*.conf**.
-These files are always loaded.
+primary sets of configuration files are the system defaults in
+**@datarootdir@/tellme/\*.conf** and user-defaults in
+**XDG_CONFIG_HOME/tellme/\*.conf**. These files are always loaded.
 
 Per-directory overrides may be placed in **$PWD/.tellme/\*.conf**.
 **tellme** runs upwards from the current working directory to locate a

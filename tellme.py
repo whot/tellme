@@ -25,6 +25,7 @@ def talk(command, status):
 	p.communicate(msg)
 
 class Command(object):
+	sysconfigpath = "@datarootdir@"
 	configpath = os.getenv("XDG_CONFIG_HOME",  "%s/.config" % os.environ["HOME"])
 	def __init__(self, command):
 		self.commandline = self._strip_sudo(command)
@@ -55,6 +56,7 @@ class Command(object):
 		self.config = ConfigParser.SafeConfigParser()
 
 		paths = glob.glob("%s/tellme/*.conf" % (self.configpath))
+		paths + glob.glob("%s/tellme/*.conf" % (self.sysconfigpath))
 
 		# run up from cwd to first instance of .tellme existing
 		cwd = os.getcwd()
