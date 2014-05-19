@@ -71,3 +71,6 @@ core
 *.pdb
 *.tar.bz2
 *.tar.gz
+
+# Local patterns
+.vimdir
