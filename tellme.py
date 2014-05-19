@@ -124,9 +124,9 @@ class Command(object):
 
 	def _filter_args(self):
 		wl = self._get_config_option("whitelist") or ""
-		wl = wl.split(" ")
+		wl = [x for x in  wl.split(" ") if len(x) > 0]
 		bl = self._get_config_option("blacklist") or ""
-		bl = bl.split(" ")
+		bl = [x for x in  bl.split(" ") if len(x) > 0]
 
 		args = self.commandline[1:]
 		if len(bl) == 0 and len(wl) == 0:
