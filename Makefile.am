@@ -1,5 +1,7 @@
 dist_bin_SCRIPTS = tellme
 dist_man1_MANS = tellme.1
+tellmedir = $(datadir)/tellme/
+tellme_DATA = tellme-default.conf
 
 SUFFIXES = .1
 
