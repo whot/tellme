@@ -6,7 +6,7 @@ process finishes.
 
 For example:
 
-   tellme sudo yum update
+    tellme sudo yum update
 
 will eventually say "finished yum update successfully". Yes, it's smart
 enough to strip the sudo out. Some configuration options are available, see
