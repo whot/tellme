@@ -1,16 +1,23 @@
-tellme - command execution notifier
-===================================
+tellme - text-to-speech command execution notifier
+=======================================
 
-tellme is used to run commands in the background and notify the user when
-the command has finished. It does this through two methods:
+tellme runs the command and notify the user through text-to-speech when the
+process finishes.
 
-* text-to-speech: on completion of the task, tell the user the program
-  finished
-* log to system: on completion of the task, add a journal log entry
+For example:
 
+   tellme sudo yum update
+
+will eventually say "finished yum update successfully". Yes, it's smart
+enough to strip the sudo out. Some configuration options are available, see
+the example configuration file. With that file,
+
+    cd myproject
+    tellme make install
+
+will eventually say "finished myproject make install successfully".
 
 Dependencies 
 ------------
 
-* festival for text-to-speech
-* systemd for systemd-cat
+festival is currently hardcoded as the text-to-speech engine.
