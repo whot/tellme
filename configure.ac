@@ -17,5 +17,10 @@ if test "x$PANDOC" = "x"; then
 	AC_MSG_ERROR([pandoc not found - required for man pages])
 fi
 
+AC_PATH_PROG([FESTIVAL], [festival])
+if test "x$FESTIVAL" = "x"; then
+	AC_MSG_WARN([festival not found on this machine - required for voice output])
+fi
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
