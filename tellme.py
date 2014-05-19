@@ -55,8 +55,8 @@ class Command(object):
 	def _apply_config(self):
 		self.config = ConfigParser.SafeConfigParser()
 
-		paths = glob.glob("%s/tellme/*.conf" % (self.configpath))
-		paths + glob.glob("%s/tellme/*.conf" % (self.sysconfigpath))
+		paths = glob.glob("%s/tellme/*.conf" % (self.sysconfigpath))
+		paths += glob.glob("%s/tellme/*.conf" % (self.configpath))
 
 		# run up from cwd to first instance of .tellme existing
 		cwd = os.getcwd()
