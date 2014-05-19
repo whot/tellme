@@ -7,7 +7,10 @@ import re
 import sys
 import os
 import subprocess
-import ConfigParser
+try:
+	import configparser
+except ImportError:
+	import ConfigParser as configparser
 
 def usage():
 	print("usage: %s command [options]" % os.path.basename(sys.argv[0]))
@@ -46,7 +49,7 @@ class Command(object):
 		return val
 
 	def _apply_config(self):
-		self.config = ConfigParser.SafeConfigParser()
+		self.config = configparser.SafeConfigParser()
 
 		paths = glob.glob("%s/tellme/*.conf" % (self.sysconfigpath))
 		paths += glob.glob("%s/tellme/*.conf" % (self.configpath))
