@@ -154,7 +154,7 @@ class Command(object):
 			p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
 			msg = "finished %s" % str(self.binary)
 			if self.status != 0:
-				msg += " with error %d" % status
+				msg += " with error %d" % self.status
 			else:
 				msg += " successfully"
 			p.communicate(msg.encode("utf-8"))
