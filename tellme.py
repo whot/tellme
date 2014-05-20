@@ -152,7 +152,7 @@ class Command(object):
 		# terminal
 		if os.fork() == 0:
 			p = subprocess.Popen(["festival", "--tts"], stdin=subprocess.PIPE)
-			msg = "finished %s" % str(self.binary)
+			msg = "finished %s" % str(self.output)
 			if self.status != 0:
 				msg += " with error %d" % self.status
 			else:
