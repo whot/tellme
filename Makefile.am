@@ -14,4 +14,4 @@ tellme: tellme.py
 	sed $(SED_SUBS) $^ > $@
 
 CLEANFILES = $(dist_man1_MANS) $(dist_bin_SCRIPTS)
-EXTRA_DIST = tellme.example.conf
+EXTRA_DIST = tellme.py tellme-default.conf tellme.man
