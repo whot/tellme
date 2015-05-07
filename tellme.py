@@ -158,7 +158,7 @@ class Command(object):
 			else:
 				msg += " successfully"
 			p.communicate(msg.encode("utf-8"))
-
+			sys.exit(0)
 
 if __name__ == "__main__":
 	if len(sys.argv) == 1:
