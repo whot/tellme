@@ -78,7 +78,7 @@ class Command(object):
 		want_dir = self._get_config_option("directory")
 
 		path = ""
-		if want_dir == "none": 
+		if want_dir == "none":
 			pass
 		elif want_dir == "cwd":
 			path = os.path.basename(os.getcwd())
